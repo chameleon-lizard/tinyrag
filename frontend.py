@@ -1,31 +1,7 @@
 import argparse
-import urllib.parse
-import requests
-from bs4 import BeautifulSoup
 import main
 
-
-def validate_url(url):
-    try:
-        result = urllib.parse.urlparse(url)
-        return all([result.scheme, result.netloc])
-    except ValueError:
-        return False
-
-
-def download_page(url):
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an exception for HTTP errors
-        return response.text
-    except requests.exceptions.RequestException as err:
-        print(f"Error downloading page: {err}")
-        return None
-
-
-def extract_text(html):
-    soup = BeautifulSoup(html, "html.parser")
-    return soup.get_text()
+import src.utils as utils
 
 
 def _main():
@@ -35,20 +11,17 @@ def _main():
     parser.add_argument("url", type=str, help="The web link to download")
     args = parser.parse_args()
 
-    if not validate_url(args.url):
+    if not utils.validate_url(args.url):
         parser.error(
             f"'{args.url}' is not a valid URL. Please provide a valid web link."
         )
         return 1  # Exit with an error code
 
-    html_content = download_page(args.url)
+    html_content = utils.download_page(args.url)
     if html_content is None:
         return 1  # Exit with an error code if download failed
 
-    text = extract_text(html_content)
-
-    with open("file.txt", "w", encoding="utf-8") as file:
-        file.write(text)
+    text = utils.extract_text(html_content)
 
     c = main.Chatbot(text)
     while True:

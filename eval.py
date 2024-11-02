@@ -12,7 +12,7 @@ import threading
 from queue import Queue
 
 import src.prompts as prompts
-import utils
+import src.utils as utils
 
 dotenv.load_dotenv(".env")
 
