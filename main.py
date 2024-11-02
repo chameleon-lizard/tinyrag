@@ -6,7 +6,7 @@ import wordllama
 class Chatbot:
     def __init__(
         self,
-        file_paths: list[str],
+        knowledge_base: str,
         repo_id: str = "bartowski/gemma-2-2b-it-GGUF",
         quant: str = "*Q4_K_S.gguf",
     ) -> None:
@@ -21,9 +21,6 @@ class Chatbot:
             n_gpu_layers=256,
             verbose=False,
         )
-
-        # Loading knowledge_base
-        knowledge_base = "\n\n".join(pathlib.Path(_).read_text() for _ in file_paths)
 
         # Semantic chunking
         self.chunks = self.wl.split(knowledge_base, target_size=256)
@@ -85,13 +82,14 @@ class Chatbot:
 
 
 if __name__ == "__main__":
-    c = Chatbot(["file.txt"])
+    text = pathlib.Path("file.txt").read_text()
+    c = Chatbot(text)
 
-    print("Q: Кто такая Фара?")
-    print("A: " + c.send_question("Кто такая Фара?")[0])
+    print("Q: Who is Farah?")
+    print("A: " + c.send_question("Who is Farah?")[0])
 
-    print("Q: Кто такой Прайс?")
-    print("A: " + c.send_question("Кто такой Прайс?")[0])
+    print("Q: Who is Price?")
+    print("A: " + c.send_question("Who is Price?")[0])
 
-    print("Q: Кто композитор игры?")
-    print("A: " + c.send_question("Кто композитор игры?")[0])
+    print("Q: Who is the game's composer?")
+    print("A: " + c.send_question("Who is the game's composer?")[0])

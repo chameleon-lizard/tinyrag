@@ -48,9 +48,10 @@ def judge(item, q):
         return
 
 
-eval_files = ["questions_en.json", "questions_ru.json"]
+eval_files = ["questions_en.json"]
 
-c = Chatbot(["orientation.md"])
+text = pathlib.Path("orientation.md").read_text()
+c = Chatbot(text)
 
 for idx, eval_file in enumerate(eval_files):
     data = json.loads(pathlib.Path(eval_file).read_text())
