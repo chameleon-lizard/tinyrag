@@ -62,7 +62,8 @@ for idx, eval_file in enumerate(eval_files):
         if question in [output["question"] for output in outputs]:
             continue
 
-        answer = c.send_question(question)
+        ranked = c.retrieve(question)
+        answer = c.send_question(question, ranked)
 
         result = {
             "question": question,

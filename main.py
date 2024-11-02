@@ -44,13 +44,19 @@ class Chatbot:
                 },
             ]
 
-    def send_question(self, question: str) -> tuple[str, list[tuple[str, float]]]:
+    def retrieve(self, question: str) -> list[tuple[str, float]]:
         top_docs = self.wl.topk(question, self.chunks, k=6)
-        ranked = [
+        return [
             (sent, sim)
             for sent, sim in self.wl.rank(question, top_docs, sort=True)
             if sim > 0.25
         ]
+
+    def send_question(
+        self,
+        question: str,
+        ranked: list[tuple[str, float]],
+    ) -> tuple[str, list[tuple[str, float]]]:
         context = "\n".join(
             f"""DOCUMENT SIMILARITY: 
 
@@ -78,18 +84,4 @@ class Chatbot:
 
         res = self.llm.create_chat_completion(messages_)
 
-        return res["choices"][0]["message"]["content"], ranked
-
-
-if __name__ == "__main__":
-    text = pathlib.Path("file.txt").read_text()
-    c = Chatbot(text)
-
-    print("Q: Who is Farah?")
-    print("A: " + c.send_question("Who is Farah?")[0])
-
-    print("Q: Who is Price?")
-    print("A: " + c.send_question("Who is Price?")[0])
-
-    print("Q: Who is the game's composer?")
-    print("A: " + c.send_question("Who is the game's composer?")[0])
+        return res["choices"][0]["message"]["content"]

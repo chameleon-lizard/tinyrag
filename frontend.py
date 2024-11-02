@@ -15,7 +15,6 @@ def _main():
         parser.error(
             f"'{args.url}' is not a valid URL. Please provide a valid web link."
         )
-        return 1  # Exit with an error code
 
     html_content = utils.download_page(args.url)
     if html_content is None:
@@ -24,19 +23,27 @@ def _main():
     text = utils.extract_text(html_content)
 
     c = main.Chatbot(text)
+    print_before = not utils.is_gpu_available()
+
     while True:
         question = input("Q: ")
-        answer, documents = c.send_question(question)
+
+        ranked = c.retrieve(question)
+
+        if print_before:
+            print()
+            utils.print_references(ranked, args.url)
+            print("Generating response...")
+            print()
+
+        answer = c.send_question(question, ranked)
 
         print(f"A: {answer}", end="")
-        print(
-            "References: \n"
-            + "\n".join(
-                f"Doc {idx}, sim {doc[1]:.2f}: {doc[0][:50]}..."
-                for idx, doc in enumerate(documents)
-            )
-        )
-        print()
+
+        if not print_before:
+            print()
+            utils.print_references(ranked, args.url)
+            print()
 
 
 if __name__ == "__main__":
