@@ -1,0 +1,9 @@
+eval/
+src/__pycache__/
+.env
+*.json
+orientation.md
+__pycache__/
+.mypy_cache/
+venv/
+
