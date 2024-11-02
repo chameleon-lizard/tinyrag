@@ -78,7 +78,7 @@ class Chatbot:
         return [
             (sent, sim)
             for sent, sim in self.wl.rank(question, top_docs, sort=True)
-            if sim > 0.25
+            if sim > 0.1
         ]
 
     def send_question(

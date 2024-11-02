@@ -9,6 +9,7 @@ def _main():
         description="Download a web page, extract text, and save to file."
     )
     parser.add_argument("url", type=str, help="The web link to download")
+    parser.add_argument('--query', type=str, help='The question to ask', required=False)
     args = parser.parse_args()
 
     if not utils.validate_url(args.url):
@@ -27,7 +28,10 @@ def _main():
 
     while True:
         try:
-            question = input("Q: ")
+            if args.query is not None:
+                question = args.query
+            else:
+                question = input("Q: ")
 
             ranked = c.retrieve(question)
 
@@ -45,6 +49,10 @@ def _main():
                 print()
                 utils.print_references(ranked, args.url)
                 print()
+
+            if args.query is not None:
+                c.shutdown()
+                break
         except (KeyboardInterrupt, EOFError):
             c.shutdown()
             break

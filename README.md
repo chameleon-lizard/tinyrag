@@ -24,8 +24,16 @@ bash install.sh
 
 ## Usage
 
+You can start chatting with a webpage simply by passing it to the script:
+
 ```
 python frontend.py https://github.com/chameleon-lizard/tinyrag
+```
+
+Additionally, you can pass the query directly, enabling automations:
+
+```
+python frontend.py https://github.com/chameleon-lizard/tinyrag --query 'Which library is used as an embedder?'
 ```
 
 ## Evaluations
