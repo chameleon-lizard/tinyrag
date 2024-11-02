@@ -39,23 +39,57 @@ JUDGE_API_LINK=<Link to API of the judge>
 JUDGE_MODEL=openai/gpt-4o-mini
 ```
 
-Sample evaluation dataset is located in `data` folder. Evaluation results:
+Sample evaluation dataset is located in `data` folder. Evaluation results for `gemma-2-2b`, `llama-3.2-3b` and `qwen-2-7b` in Q4_K_S quant:
 
 ```
 Model: bartowski/gemma-2-2b-it-GGUF
 Quant: Q4_K_S
 Judge model: openai/gpt-4o-mini
 score
-5     0
-4    33
-3     9
-2     1
-1    26
-0     1
+5     1
+4    32
+3     8
+2     5
+1    14
+0    10
 Name: count, dtype: int64
-Mean score: 2.710144927536232
+
+Mean score: 3.0166666666666666
+Median score: 4.0
+Percentage: 60.33333333333333
+
+
+Model: bartowski/Llama-3.2-3B-Instruct-GGUF
+Quant: Q4_K_S
+Judge model: openai/gpt-4o-mini
+score
+5     0
+4    31
+3    10
+2     4
+1    15
+0    10
+Name: count, dtype: int64
+
+Mean score: 2.95
+Median score: 4.0
+Percentage: 59.00000000000001
+
+Model: bartowski/Qwen2-7B-Instruct-GGUF
+Quant: Q4_K_S
+Judge model: openai/gpt-4o-mini
+score
+5     0
+4    29
+3    11
+2     3
+1    16
+0    11
+Name: count, dtype: int64
+
+Mean score: 2.8983050847457625
 Median score: 3.0
-Percentage: 54.20289855072464
+Percentage: 57.96610169491525
 ```
 
 Just for reference, here are the results of [SkoltechChatBot's implementation of RAG](https://github.com/chameleon-lizard/SkoltechChatBot):
@@ -95,7 +129,7 @@ Median score: 5.0
 Percentage: 86.76923076923076
 ```
 
-Kinda bad in comparison, but not really, considering it uses almost 10 times less VRAM/RAM and the eval runtime is 21 second instead of 4 minutes :)
+Kinda bad in comparison, but since we're targeting edge, the results are good enough. The default model is `gemma-2-2b`.
 
 
 ## Usage tips
