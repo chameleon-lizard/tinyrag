@@ -26,24 +26,28 @@ def _main():
     print_before = not utils.is_gpu_available()
 
     while True:
-        question = input("Q: ")
+        try:
+            question = input("Q: ")
 
-        ranked = c.retrieve(question)
+            ranked = c.retrieve(question)
 
-        if print_before:
-            print()
-            utils.print_references(ranked, args.url)
-            print("Generating response...")
-            print()
+            if print_before:
+                print()
+                utils.print_references(ranked, args.url)
+                print("Generating response...")
+                print()
 
-        answer = c.send_question(question, ranked)
+            answer = c.send_question(question, ranked)
 
-        print(f"A: {answer}", end="")
+            print(f"A: {answer}", end="")
 
-        if not print_before:
-            print()
-            utils.print_references(ranked, args.url)
-            print()
+            if not print_before:
+                print()
+                utils.print_references(ranked, args.url)
+                print()
+        except (KeyboardInterrupt, EOFError):
+            c.shutdown()
+            break
 
 
 if __name__ == "__main__":
