@@ -16,7 +16,7 @@ An instruction (might include an Input inside it), a response to evaluate, a ref
 
 ###Score Rubrics:
 [Is the response correct, accurate, and factual based on the reference answer?]
-Score 0: The response is a recommendation to refer to Education Department.
+Score 0: The response is a recommendation to refer to Education Department or mention that there is nothing of note in the documents.
 Score 1: The response is completely incorrect, inaccurate, and/or not factual.
 Score 2: The response is mostly incorrect, inaccurate, and/or not factual.
 Score 3: The response is somewhat correct, accurate, and/or factual.
