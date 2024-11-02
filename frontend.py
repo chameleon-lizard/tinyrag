@@ -30,7 +30,7 @@ def _main():
 
         print(f"A: {answer}", end="")
         print(
-            "References: "
+            "References: \n"
             + "\n".join(
                 f"Doc {idx}, sim {doc[1]:.2f}: {doc[0][:50]}..."
                 for idx, doc in enumerate(documents)
