@@ -5,16 +5,16 @@ An instruction (might include an Input inside it), a response to evaluate, a ref
 3. The output format should look as follows: \"Feedback: {{write a feedback for criteria}} [RESULT] {{an integer number between 0 and 5}}\"
 4. Please do not generate any other opening, closing, and explanations. Be sure to include [RESULT] in your output.
 
-###The instruction to evaluate:
+### The instruction to evaluate:
 {instruction}
 
-###Response to evaluate:
+### Response to evaluate:
 {response}
 
-###Reference Answer (Score 5):
+### Reference Answer (Score 5):
 {reference_answer}
 
-###Score Rubrics:
+### Score Rubrics:
 [Is the response correct, accurate, and factual based on the reference answer?]
 Score 0: The response is a recommendation to refer to Education Department or mention that there is nothing of note in the documents.
 Score 1: The response is completely incorrect, inaccurate, and/or not factual.
@@ -24,3 +24,22 @@ Score 4: The response is mostly correct, accurate, and factual.
 Score 5: The response is completely correct, accurate, and factual.
 
 ###Feedback:"""
+
+
+CONTEXT_TEMPLATE = """DOCUMENT SIMILARITY: 
+{similarity:.2f}
+
+DOCUMENT TEXT:
+{document_text}
+
+------------------
+
+"""
+
+
+QUESTION_TEMPLATE = """CONTEXT:
+{context}
+
+QUESTION:
+{question}
+"""
