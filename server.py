@@ -12,7 +12,7 @@ CORS(app)
 
 chatbot_instance = None
 last_request_time = None
-UNLOAD_TIMEOUT = 15
+UNLOAD_TIMEOUT = 120
 
 
 def unload_model():
