@@ -1,5 +1,6 @@
 # Tinyrag
-A Chrome extension implementation of TinyRAG - a lightweight RAG (Retrieval-Augmented Generation) system. This is a fork of the original [Tinyrag project](https://github.com/chameleon-lizard/tinyrag), modified to work as a browser extension and using Transformers instead of llama.cpp.
+
+A tiny chrome extension, using which you can chat with your webpages.
 
 ## Installation
 
@@ -9,43 +10,21 @@ A Chrome extension implementation of TinyRAG - a lightweight RAG (Retrieval-Augm
 2. Open Chrome and navigate to `chrome://extensions/`
 3. Enable "Developer mode" in the top right corner
 4. Click "Load unpacked" and select the `extension` directory from the cloned repository
+5. Click the extension icon in Chrome to open the popup interface
+6. Set up your models and API keys in the Settings section
 
-### Backend Server
+### About models and API keys
 
-1. Create a virtual environment:
-```bash
-python -m venv venv
-```
+By default, an free tier of Gemma-2-9b model on OpenRouter is selected. To use it, create your own API key and paste it into the field. You can use any OpenAI-compatible API endpoint, even a self hosted one. If the endpoint does not implement keys, put anything into the key field.
 
-2. Activate the virtual environment:
-```bash
-source venv/bin/activate  # For Linux/MacOS
-# or
-venv\Scripts\activate  # For Windows
-```
+Embedding model to do search through the webpage is inferenced locally, on the CPU of your computer, thus, it might be slow. On Intel Core i5-5250U it takes about 30 seconds to index a medium sized Wikipedia page using Xenova/multilingual-e5-small model and about 8-10 seconds using Xenova/all-MiniLM-L6-v2.
 
-3. Install the required packages:
-```bash
-pip install -r requirements.txt
-```
-
-4. Create a `.env` file for setup:
-```
-echo 'API_KEY=sk-or-v1-xxxxxx
-MODEL=google/gemini-flash-1.5-8b
-API_LINK=https://openrouter.ai/api/v1
-EMBEDDER_MODEL=intfloat/multilingual-e5-small' > .env
-```
+You can experiment with different models by checking out [ONNX converted models on HuggingFace](https://huggingface.co/Xenova).
 
 ## Usage
 
-1. Start the backend server:
-```bash
-python server.py
-```
-
-2. Click the extension icon in Chrome to open the popup interface
-3. Enter your question about the current webpage
-4. Click "Ask" to get an answer
-5. Relevant text passages on the webpage will be highlighted
-6. Use "Clear" to remove highlights and reset the interface
+1. Click the extension icon in Chrome to open the popup interface
+2. Enter your question about the current webpage
+3. Click "Ask" to get an answer
+4. Relevant text passages on the webpage will be highlighted
+5. Use "Clear" to remove highlights and reset the interface
