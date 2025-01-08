@@ -1,8 +1,10 @@
-
 import time
 import threading
 import src.utils as utils
 import main
+import os
+
+import dotenv
 
 from flask_cors import CORS
 from flask import Flask, request, jsonify
@@ -10,10 +12,16 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 CORS(app)
 
+dotenv.load_dotenv(".env")
+
 chatbot_instance = None
 last_request_time = None
 UNLOAD_TIMEOUT = 120
-
+API_KEY = os.environ.get('API_KEY')
+MODEL = os.environ.get('MODEL')
+API_LINK = os.environ.get('API_LINK')
+EMBEDDER_MODEL = os.environ.get('EMBEDDER_MODEL')
+    
 
 def unload_model():
     """
@@ -21,7 +29,7 @@ def unload_model():
     """
     global chatbot_instance
     if chatbot_instance is not None:
-        chatbot_instance.shutdown()
+        del chatbot_instance
         chatbot_instance = None
         print("[INFO] Model unloaded from memory.")
 
@@ -65,9 +73,13 @@ def process_page():
             return jsonify({"error": "Failed to download page"}), 500
 
         text = utils.extract_text(html_content)
-        chatbot_instance = main.Chatbot(text)
-
-        chatbot_instance.wait_for_load()
+        chatbot_instance = main.Chatbot(
+            knowledge_base=text, 
+            api_key=API_KEY,
+            model=MODEL,
+            api_link=API_LINK,
+            embedder_model=EMBEDDER_MODEL,
+        )
 
     ranked = chatbot_instance.retrieve(question)
     answer = chatbot_instance.send_question(question, ranked)
