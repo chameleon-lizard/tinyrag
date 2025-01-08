@@ -1,96 +1,168 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Ask AI</title>
-    
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 10px;
-        background-color: #f5f5f5;
-        width: 400px;
-        height: auto;
-        box-sizing: border-box;
-        min-height: 120px;
-        transition: all 0.3s ease;
-      }
+<head>
+  <meta charset="utf-8" />
+  <title>Ask AI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 10px;
+      background-color: #f5f5f5;
+      width: 400px;
+      height: auto;
+      box-sizing: border-box;
+      min-height: 120px;
+      transition: all 0.3s ease;
+    }
 
-      #questionInput {
-        width: calc(100% - 20px);
-        padding: 8px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 14px;
-      }
+    #questionInput {
+      width: calc(100% - 20px);
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
 
-      .button-container {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 15px;
-      }
+    .button-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
 
-      #askBtn, #clearBtn {
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        font-size: 14px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      }
+    #askBtn,
+    #clearBtn,
+    #settingsBtn,
+    #saveSettingsBtn {
+      /* Added styles for new buttons */
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
 
-      #askBtn {
-        flex-grow: 2;
-        background-color: #007BFF;
-        color: white;
-      }
+    #askBtn {
+      flex-grow: 2;
+      background-color: #007BFF;
+      color: white;
+    }
 
-      #clearBtn {
-        flex-grow: 1;
-        background-color: #dc3545;
-        color: white;
-      }
+    #clearBtn {
+      flex-grow: 1;
+      background-color: #dc3545;
+      color: white;
+    }
 
-      #askBtn:hover {
-        background-color: #0056b3;
-      }
+    #settingsBtn {
+      background-color: #6c757d;
+      /* Example color - adjust as you like */
+      color: white;
+    }
 
-      #clearBtn:hover {
-        background-color: #c82333;
-      }
+    #saveSettingsBtn {
+      background-color: #28a745;
+      /* Example color - adjust as you like */
+      color: white;
+      margin-top: 10px;
+    }
 
-      #answerContainer {
-        margin-top: 15px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        background-color: #fff;
-        font-size: 14px;
-        height: 110px;
-        overflow-y: auto;
-        color: #333;
-      }
+    #askBtn:hover {
+      background-color: #0056b3;
+    }
 
-      .hidden {
-        display: none !important;
-      }
+    #clearBtn:hover {
+      background-color: #c82333;
+    }
 
-      body.expanded {
-        height: 250px;
-      }
-    </style>
-  </head>
-  <body>
-    <div>
-      <input id="questionInput" type="text" placeholder="Your question..." autofocus />
-      <div class="button-container">
-        <button id="askBtn">Ask</button>
-        <button id="clearBtn">Clear</button>
-      </div>
+    #settingsBtn:hover {
+      background-color: #5a6268;
+    }
+
+    #saveSettingsBtn:hover {
+      background-color: #218838;
+    }
+
+    #answerContainer {
+      margin-top: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #fff;
+      font-size: 14px;
+      height: 110px;
+      overflow-y: auto;
+      color: #333;
+    }
+
+    /* Updated hidden class */
+    .hidden {
+      display: none;
+    }
+
+    body.expanded {
+      height: 250px;
+    }
+
+    /* Styles for the settings content */
+    #settingsContent {
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+    }
+
+    #settingsContent > div {
+      margin-bottom: 8px;
+    }
+
+    #settingsContent label {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 14px;
+    }
+
+    #settingsContent input {
+      width: calc(100% - 10px);
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <input id="questionInput" type="text" placeholder="Your question..." autofocus />
+    <div class="button-container">
+      <button id="askBtn">Ask</button>
+      <button id="clearBtn">Clear</button>
     </div>
-    <div id="answerContainer" class="hidden"></div>
-    <script src="popup.js"></script>
-  </body>
+    <button id="settingsBtn">Settings</button>
+    <div id="settingsContent" class="hidden">
+      <div>
+        <label for="apiKeyInput">API Key:</label>
+        <input type="text" id="apiKeyInput" />
+      </div>
+      <div>
+        <label for="modelInput">Model:</label>
+        <input type="text" id="modelInput" />
+      </div>
+      <div>
+        <label for="apiLinkInput">API Link:</label>
+        <input type="text" id="apiLinkInput" />
+      </div>
+      <div>
+        <label for="embedderModelInput">Embedder Model:</label>
+        <input type="text" id="embedderModelInput" />
+      </div>
+      <button id="saveSettingsBtn">Save Settings</button>
+    </div>
+  </div>
+  <div id="answerContainer" class="hidden"></div>
+  <script src="popup.js"></script>
+  <script src="lib/mark.min.js"></script>
+</body>
 </html>

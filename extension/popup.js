@@ -3,9 +3,52 @@ document.addEventListener('DOMContentLoaded', function () {
   const askBtn = document.getElementById('askBtn');
   const clearBtn = document.getElementById('clearBtn');
   const answerContainer = document.getElementById('answerContainer');
+  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsContent = document.getElementById('settingsContent');
+  const apiKeyInput = document.getElementById('apiKeyInput');
+  const modelInput = document.getElementById('modelInput');
+  const apiLinkInput = document.getElementById('apiLinkInput');
+  const embedderModelInput = document.getElementById('embedderModelInput');
+  const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+
+  // Default configuration values
+  const defaultConfig = {
+    API_KEY: 'sk-or-v1-xxxxx',
+    MODEL: 'google/gemini-flash-1.5-8b',
+    API_LINK: 'https://openrouter.ai/api/v1',
+    EMBEDDER_MODEL: 'intfloat/multilingual-e5-small',
+  };
+
+  // Load saved settings or use defaults
+  chrome.storage.sync.get(['settings'], function (result) {
+    const settings = result.settings || defaultConfig;
+    apiKeyInput.value = settings.API_KEY;
+    modelInput.value = settings.MODEL;
+    apiLinkInput.value = settings.API_LINK;
+    embedderModelInput.value = settings.EMBEDDER_MODEL;
+  });
 
   // Set focus to the question input field
   questionInput.focus();
+
+  // Toggle settings visibility
+  settingsBtn.addEventListener('click', () => {
+    settingsContent.classList.toggle('hidden');
+  });
+
+  // Save settings
+  saveSettingsBtn.addEventListener('click', () => {
+    const settings = {
+      API_KEY: apiKeyInput.value,
+      MODEL: modelInput.value,
+      API_LINK: apiLinkInput.value,
+      EMBEDDER_MODEL: embedderModelInput.value,
+    };
+    chrome.storage.sync.set({ settings }, () => {
+      console.log('Settings saved');
+      settingsContent.classList.add('hidden');
+    });
+  });
 
   clearBtn.addEventListener('click', async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -32,8 +75,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // Expand the popup
     document.body.classList.add('expanded');
     answerContainer.classList.remove('hidden');
-    answerContainer.textContent = "Please wait, processing...";
-    console.log('Sending a request to the server with the URL:', url, 'and the question:', question);
+    answerContainer.textContent = 'Please wait, processing...';
+    console.log(
+      'Sending a request to the server with the URL:',
+      url,
+      'and the question:',
+      question
+    );
 
     try {
       const response = await fetch('http://127.0.0.1:5000/process', {
@@ -46,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (!response.ok) {
         console.error('The server error:', response.statusText);
-        answerContainer.textContent = "The server error.";
+        answerContainer.textContent = 'The server error.';
         return;
       }
 
@@ -56,14 +104,20 @@ document.addEventListener('DOMContentLoaded', function () {
       const { answer, chunks } = data;
 
       answerContainer.textContent = answer;
-      console.log('Sending a message to contentScript.js with chunks:', chunks);
+      console.log(
+        'Sending a message to contentScript.js with chunks:',
+        chunks
+      );
 
       chrome.tabs.sendMessage(
         tab.id,
         { type: 'HIGHLIGHT_CHUNKS', chunks },
-        response => {
+        (response) => {
           if (chrome.runtime.lastError) {
-            console.error('The error sending a message to contentScript.js:', chrome.runtime.lastError.message);
+            console.error(
+              'The error sending a message to contentScript.js:',
+              chrome.runtime.lastError.message
+            );
             return;
           }
           console.log('The response from contentScript.js:', response);
@@ -76,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Add event listener for pressing Enter in the input field
-  questionInput.addEventListener('keydown', function(event) {
+  questionInput.addEventListener('keydown', function (event) {
     if (event.key === 'Enter') {
       event.preventDefault(); // Prevent form submission if the input is within a form
       askBtn.click(); // Trigger the click event of the Ask button

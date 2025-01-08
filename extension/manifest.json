@@ -4,6 +4,7 @@
   "manifest_version": 3,
   "description": "Test extension",
   "permissions": [
+    "storage",
     "activeTab",
     "scripting"
   ],
