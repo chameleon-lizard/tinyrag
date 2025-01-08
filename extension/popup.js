@@ -1,3 +1,5 @@
+import { Chatbot } from './Chatbot.js';
+
 document.addEventListener('DOMContentLoaded', function () {
   const questionInput = document.getElementById('questionInput');
   const askBtn = document.getElementById('askBtn');
@@ -13,11 +15,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Default configuration values
   const defaultConfig = {
-    API_KEY: 'sk-or-v1-xxxxx',
-    MODEL: 'google/gemini-flash-1.5-8b',
-    API_LINK: 'https://openrouter.ai/api/v1',
-    EMBEDDER_MODEL: 'intfloat/multilingual-e5-small',
+    API_KEY: 'sk-or-v1-xxxxxx',
+    MODEL: 'google/gemma-2-9b-it:free',
+    API_LINK: 'https://openrouter.ai/api/v1/chat/completions',
+    EMBEDDER_MODEL: 'Xenova/multilingual-e5-small',
   };
+
+  let chatbotInstance = null;
+  let lastRequestTime = null;
 
   // Load saved settings or use defaults
   chrome.storage.sync.get(['settings'], function (result) {
@@ -76,38 +81,49 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.classList.add('expanded');
     answerContainer.classList.remove('hidden');
     answerContainer.textContent = 'Please wait, processing...';
-    console.log(
-      'Sending a request to the server with the URL:',
-      url,
-      'and the question:',
-      question
-    );
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/process', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, question }),
+      // Load settings
+      const settings = await new Promise((resolve) => {
+        chrome.storage.sync.get(['settings'], (result) => {
+          resolve(result.settings || defaultConfig);
+        });
       });
 
-      console.log('The response from the server is received:', response);
+      // Download and clean the webpage content
+      const htmlContent = await fetch(url).then((response) => response.text());
+      const text = extractTextFromHtml(htmlContent);
 
-      if (!response.ok) {
-        console.error('The server error:', response.statusText);
-        answerContainer.textContent = 'The server error.';
-        return;
+      if (!text) {
+        throw new Error('Failed to extract text from the webpage.');
       }
 
-      const data = await response.json();
-      console.log('The data from the server:', data);
+      // Initialize or reuse the chatbot instance
+      if (!chatbotInstance) {
+        console.log('[INFO] Loading model...');
+        chatbotInstance = new Chatbot(
+          text, // Use the cleaned text as the knowledge base
+          settings.API_KEY,
+          settings.MODEL,
+          settings.API_LINK,
+          settings.EMBEDDER_MODEL
+        );
+        await chatbotInstance.loadEmbedder();
+      }
 
-      const { answer, chunks } = data;
+      // Retrieve relevant chunks and get the answer
+      const ranked = await chatbotInstance.retrieve(question);
+      const answer = await chatbotInstance.sendQuestion(question, ranked);
 
+      // Display the answer
       answerContainer.textContent = answer;
-      console.log(
-        'Sending a message to contentScript.js with chunks:',
-        chunks
-      );
+
+      // Send chunks to content script for highlighting
+      const chunks = ranked.map(({ chunk, score }) => ({
+        text: chunk,
+        similarity: score,
+      }));
+      console.log('Sending a message to contentScript.js with chunks:', chunks);
 
       chrome.tabs.sendMessage(
         tab.id,
@@ -124,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       );
     } catch (error) {
-      console.error('The error when requesting the server:', error);
+      console.error('The error when processing the question:', error);
       answerContainer.textContent = `The error: ${error.message}`;
     }
   });
@@ -137,3 +153,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+
+/**
+ * Extracts and cleans text from HTML content.
+ * @param {string} htmlContent - The HTML content of the webpage.
+ * @returns {string} - The cleaned text.
+ */
+function extractTextFromHtml(htmlContent) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlContent, 'text/html');
+
+  // Remove script and style elements
+  doc.querySelectorAll('script, style').forEach((element) => element.remove());
+
+  // Extract text content
+  const text = doc.body.textContent || '';
+
+  // Clean up the text (remove extra spaces, newlines, etc.)
+  return text;
+}

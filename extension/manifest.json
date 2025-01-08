@@ -2,19 +2,12 @@
   "name": "AI QA Extension",
   "version": "1.0",
   "manifest_version": 3,
-  "description": "Test extension",
+  "description": "Chrome extension to chat with webpages. https://github.com/chameleon-lizard/tinyrag",
   "permissions": [
     "storage",
     "activeTab",
     "scripting"
   ],
-  "host_permissions": [
-    "http://127.0.0.1/*",
-    "http://localhost/*"
-  ],
-  "background": {
-    "service_worker": "background.js"
-  },
   "action": {
     "default_popup": "popup.html"
   },
@@ -25,8 +18,12 @@
       ],
       "js": [
         "mark.min.js",
-        "contentScript.js"
+        "contentScript.js",
+        "transformers.js"
       ]
     }
-  ]
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
 }
