@@ -74,4 +74,12 @@ document.addEventListener('DOMContentLoaded', function () {
       answerContainer.textContent = `The error: ${error.message}`;
     }
   });
+
+  // Add event listener for pressing Enter in the input field
+  questionInput.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Prevent form submission if the input is within a form
+      askBtn.click(); // Trigger the click event of the Ask button
+    }
+  });
 });
