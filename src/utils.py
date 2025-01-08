@@ -2,10 +2,9 @@ import openai
 import requests
 import urllib.parse
 import pyshorteners
-
+import torch
 
 from bs4 import BeautifulSoup
-from llama_cpp.llama_cpp import _load_shared_library
 
 
 def validate_url(url):
@@ -68,15 +67,17 @@ def link(uri, label):
 
 
 def is_gpu_available() -> bool:
-    lib = _load_shared_library("llama")
-    return bool(lib.llama_supports_gpu_offload())
+    """
+    Checks if a GPU is available (through PyTorch).
+    """
+    return torch.cuda.is_available()
 
 
 def print_references(ranked, url) -> None:
     print(
         "References: \n"
         + "\n".join(
-            f"sim {sim:.2f}: {link(url, label=' '.join(doc.split()[:6]))} - {' '.join(doc.split()[:6])}..."
+            f"sim {sim:.2f}: {link(url, label=' '.join(doc.split()[:10]))} - {' '.join(doc.split()[:10])}..."
             for doc, sim in ranked
         )
     )

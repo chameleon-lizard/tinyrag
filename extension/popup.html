@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Ask AI</title>
+    
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 10px;
+        background-color: #f5f5f5;
+        width: 400px;
+        height: auto;
+        box-sizing: border-box;
+        min-height: 120px;
+        transition: all 0.3s ease;
+      }
+
+      #questionInput {
+        width: calc(100% - 20px);
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+
+      .button-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      #askBtn, #clearBtn {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      #askBtn {
+        flex-grow: 2;
+        background-color: #007BFF;
+        color: white;
+      }
+
+      #clearBtn {
+        flex-grow: 1;
+        background-color: #dc3545;
+        color: white;
+      }
+
+      #askBtn:hover {
+        background-color: #0056b3;
+      }
+
+      #clearBtn:hover {
+        background-color: #c82333;
+      }
+
+      #answerContainer {
+        margin-top: 15px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        font-size: 14px;
+        height: 110px;
+        overflow-y: auto;
+        color: #333;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      body.expanded {
+        height: 250px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <input id="questionInput" type="text" placeholder="Your question..." autofocus />
+      <div class="button-container">
+        <button id="askBtn">Ask</button>
+        <button id="clearBtn">Clear</button>
+      </div>
+    </div>
+    <div id="answerContainer" class="hidden"></div>
+    <script src="popup.js"></script>
+  </body>
+</html>

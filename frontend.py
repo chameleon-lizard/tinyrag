@@ -8,8 +8,9 @@ def _main():
     parser = argparse.ArgumentParser(
         description="Download a web page, extract text, and save to file."
     )
-    parser.add_argument("url", type=str, help="The web link to download")
-    parser.add_argument('--query', type=str, help='The question to ask', required=False)
+    parser.add_argument("url", type=str, help="The web link to download", required=False)
+    parser.add_argument('--query', default='What were the tags for this question?'#'''What the question is about?'''
+                        , type=str, help='The question to ask', required=False)
     args = parser.parse_args()
 
     if not utils.validate_url(args.url):
@@ -17,7 +18,9 @@ def _main():
             f"'{args.url}' is not a valid URL. Please provide a valid web link."
         )
 
+    print(f"Downloading page: {args.url}")
     html_content = utils.download_page(args.url)
+
     if html_content is None:
         return 1  # Exit with an error code if download failed
 
@@ -56,7 +59,6 @@ def _main():
         except (KeyboardInterrupt, EOFError):
             c.shutdown()
             break
-
 
 if __name__ == "__main__":
     _main()
