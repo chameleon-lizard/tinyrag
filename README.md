@@ -29,6 +29,14 @@ venv\Scripts\activate  # For Windows
 pip install -r requirements.txt
 ```
 
+4. Create a `.env` file for setup:
+```
+echo 'API_KEY=sk-or-v1-xxxxxx
+MODEL=google/gemini-flash-1.5-8b
+API_LINK=https://openrouter.ai/api/v1
+EMBEDDER_MODEL=intfloat/multilingual-e5-small' > .env
+```
+
 ## Usage
 
 1. Start the backend server:
