@@ -1,5 +1,7 @@
 # Tinyrag
-A Chrome extension implementation of TinyRAG - a lightweight RAG (Retrieval-Augmented Generation) system. This is a fork of the original [Tinyrag project](https://github.com/chameleon-lizard/tinyrag), modified to work as a browser extension and using Transformers instead of llama.cpp.
+A Chrome extension implementation of TinyRAG - a lightweight RAG (Retrieval-Augmented Generation) system.
+
+To use it as a standalone extension (e.g. without a running in a background server), see [better-extension branch](https://github.com/chameleon-lizard/tinyrag/tree/better-extension).
 
 ## Installation
 
