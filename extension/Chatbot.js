@@ -33,7 +33,7 @@ export class Chatbot {
         if (!embeddingsPipeline && !isEmbeddingsLoading) {
             isEmbeddingsLoading = true;
             try {
-                embeddingsPipeline = await pipeline('feature-extraction', this.embedderModel);
+                embeddingsPipeline = await pipeline('feature-extraction', this.embedderModel, { device: "webgpu" },);
             } catch (error) {
                 console.error('Error loading embedding model:', error);
                 throw error;
@@ -47,7 +47,7 @@ export class Chatbot {
         // Split the text into paragraphs using newlines
         const paragraphs = text.split('\n');
         // Remove any empty paragraphs
-        return paragraphs.map(para => para.trim()).filter(para => para);
+        return paragraphs.map(para => para.trim()).filter(para => para && para.length > 25);
     }
 
     async retrieve(question) {
@@ -62,11 +62,7 @@ export class Chatbot {
         });
 
         // Embed all paragraphs
-        const paragraphEmbeddings = await Promise.all(
-            this.chunks.map(chunk =>
-                embeddingsPipeline(chunk, { pooling: 'mean', normalize: true })
-            )
-        );
+        const paragraphEmbeddings = await this.getBatchedEmbeddings(this.chunks, embeddingsPipeline, 2, 'mean', true);
 
         // Compute cosine similarities
         const cosineScores = paragraphEmbeddings.map(embedding =>
@@ -126,6 +122,16 @@ export class Chatbot {
             console.error("Error querying model:", error);
             return null;
         }
+    }
+
+    async getBatchedEmbeddings(chunks, embeddingsPipeline, batchSize = 16, pooling = 'mean', normalize = true) {
+        const allEmbeddings = [];
+        for (let i = 0; i < chunks.length; i += batchSize) {
+            const batch = chunks.slice(i, i + batchSize);
+            const batchEmbeddings = await embeddingsPipeline(batch, { pooling, normalize });
+            allEmbeddings.push(...batchEmbeddings);
+        }
+        return allEmbeddings;
     }
 
     async queryModel(messages, apiKey, model, apiEndpoint) {

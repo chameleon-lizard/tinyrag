@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     API_KEY: 'sk-or-v1-xxxxxx',
     MODEL: 'google/gemma-2-9b-it:free',
     API_LINK: 'https://openrouter.ai/api/v1/chat/completions',
-    EMBEDDER_MODEL: 'Xenova/multilingual-e5-small',
+    EMBEDDER_MODEL: 'Xenova/all-MiniLM-L6-v2',
   };
 
   let chatbotInstance = null;
